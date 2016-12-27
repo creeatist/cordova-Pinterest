@@ -83,17 +83,6 @@ module.exports = function(context) {
        }
     }
 
-    // add strip_frameworks.sh script
-    function addRunScriptPhase(proj) {
-      var options = {
-        shellPath: '/bin/sh',
-        shellScript: 'bash "$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH/imglyKit.framework/strip-framework.sh"'
-      };
-      var phase = proj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Strip imglyKit framework', proj.getFirstTarget().uuid, options);
-      console.log("Added build phase:");
-      console.log(phase);
-    }
-
     myProj.parseSync();
     addRunpathSearchBuildProperty(myProj, "Debug");
     addRunpathSearchBuildProperty(myProj, "Release");
@@ -148,8 +137,6 @@ module.exports = function(context) {
         myProj.addToPbxBuildFileSection(newFrameworkFileEntry);
         myProj.addToPbxFrameworksBuildPhase(newFrameworkFileEntry);
     }
-
-    addRunScriptPhase(myProj);
 
     fs.writeFileSync(projectPath, myProj.writeSync());
     console.log('Embedded Frameworks In ' + context.opts.plugin.id);
