@@ -2,15 +2,15 @@
 //  PinterestPlugin.h
 
 #import <Cordova/CDV.h>
-#import <Pinterest/Pinterest.h>
+#import "PinterestSDK.h"
 
 @interface PinterestPlugin : CDVPlugin
 {
-    Pinterest*    pinterest;
+    PDKClient*    pinterest;
     NSString*     clientId;
 }
 
-@property (nonatomic, retain) Pinterest* pinterest;
+@property (nonatomic, retain) PDKClient* pinterest;
 @property (nonatomic, retain) NSString*     clientId;
 
 - (void)initPinterest:(CDVInvokedUrlCommand*)command;;

@@ -2,6 +2,7 @@
 //  Pinterest.m
 
 #import "PinterestPlugin.h"
+#include "PDKPin.h"
 
 @implementation PinterestPlugin
 
@@ -14,7 +15,8 @@
 
     self.clientId = [[NSString alloc] initWithString:[command.arguments objectAtIndex:0]];
     if (self.pinterest == nil){
-        self.pinterest = [[Pinterest alloc] initWithClientId:self.clientId urlSchemeSuffix:@"prod"];
+        [PDKClient configureSharedInstanceWithAppId:self.clientId];
+        self.pinterest = [PDKClient sharedInstance];
 	}
     if (self.pinterest != nil) {
         NSLog(@"Pinterest Plugin initalized with clientID: %@", self.clientId);
@@ -31,28 +33,19 @@
     NSURL *sourceURL = [NSURL URLWithString:[command.arguments objectAtIndex:0]];
     NSURL *imageURL = [NSURL URLWithString:[command.arguments objectAtIndex:1]];
 	NSString* description =[NSString stringWithString:[command.arguments objectAtIndex:2]];
-    CDVPluginResult* pluginResult = nil;
 
-    if ([pinterest canPinWithSDK]) {
-        [pinterest createPinWithImageURL:imageURL
-                               sourceURL:sourceURL
-                             description:description];
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Pinterest not available"];
-    }
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-    
+    [PDKPin pinWithImageURL:imageURL link:sourceURL suggestedBoardName:nil note:description fromViewController:[self viewController] withSuccess:^{
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    } andFailure:^(NSError *error) {
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error description]];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+    }];
 }
+     
 - (void)canPinWithSDK:(CDVInvokedUrlCommand*)command {
-	CDVPluginResult* pluginResult = nil;
-    
-	if ([pinterest canPinWithSDK]) {
-		pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-	} else {
-		pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Can't pin with SDK"];
-	}
-	[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+	CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 @end
