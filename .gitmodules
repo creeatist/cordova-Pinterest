@@ -1,0 +1,3 @@
+[submodule "src/ios/ios-pdk"]
+	path = src/ios/ios-pdk
+	url = https://github.com/pinterest/ios-pdk.git
