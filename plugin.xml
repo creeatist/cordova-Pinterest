@@ -39,7 +39,5 @@
 		</config-file>
 		<header-file src="src/ios/PinterestPlugin.h"/>
 		<source-file src="src/ios/PinterestPlugin.m"/>
-		<!-- release pinterest framework -->
-		<framework src="src/ios/Pinterest.embeddedframework/Pinterest.framework" custom="true"/>
 	</platform>
 </plugin>
