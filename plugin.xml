@@ -38,8 +38,8 @@
 			</feature>
 		</config-file>
 		<framework src="SafariServices.framework" weak="true" />
-		<framework src="src/ios/AFNetworking.framework" custom="true" />
-		<framework src="src/ios/SAMKeychain.framework" custom="true" />
+		<framework src="src/ios/AFNetworking.framework" custom="true" embed="true" />
+		<framework src="src/ios/SAMKeychain.framework" custom="true" embed="true" />
 		<header-file src="src/ios/PinterestPlugin.h"/>
 		<source-file src="src/ios/PinterestPlugin.m"/>
 		<header-file src="src/ios/ios-pdk/Pod/Classes/PDKBoard.h"/>
@@ -61,5 +61,10 @@
 		<header-file src="src/ios/ios-pdk/Pod/Classes/PDKUser.h"/>
 		<source-file src="src/ios/ios-pdk/Pod/Classes/PDKUser.m"/>
 		<header-file src="src/ios/ios-pdk/Pod/Classes/PinterestSDK.h"/>
+
+		<hook type="after_plugin_install" src="hooks/resolveDependencies.js" />
+		<hook type="after_platform_add" src="hooks/resolveDependencies.js" />
+		<!-- http://stackoverflow.com/questions/36650522/custom-cordova-plugin-add-framework-to-embedded-binaries -->
+		<hook type="after_build" src="hooks/add_embedded.js" />
 	</platform>
 </plugin>
