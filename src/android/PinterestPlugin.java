@@ -13,10 +13,12 @@ import android.net.Uri;
 import android.util.Log;
 
 public class PinterestPlugin extends CordovaPlugin {
-  public static final String TAG = "PinterestPlugin";
-  public static final String INIT = "initPinterest";
-  public static final String AVAILABLE = "canPinWithSDK";
-  public static final String PIN = "pin";
+  private static final String TAG = "PinterestPlugin";
+  private static final String INIT = "initPinterest";
+  private static final String AVAILABLE = "canPinWithSDK";
+  private static final String PIN = "pin";
+  private static final int PINTEREST_RESULT = 10101;
+  private CallbackContext currentCallback;
 
   /**
    * Gets the application context from cordova's main activity.
@@ -51,6 +53,16 @@ public class PinterestPlugin extends CordovaPlugin {
   private void executePin(CallbackContext callback, final String sourceUrl, final String imageUrl, final String description) {
     Log.v(TAG, "PinIt: source=" + sourceUrl + ", imageUrl: " +
             imageUrl + ", description: " + description);
+    /*cordova.getThreadPool().execute(new Runnable() {
+      public void run() {
+        final PinIt pinIt = new PinIt();
+        pinIt.setUrl(sourceUrl);
+        pinIt.setImageUrl(imageUrl);
+        pinIt.setDescription(description);
+        pinIt.setListener(_listener);
+        pinIt.doPinIt(getApplicationContext());
+      }
+    });*/
     Activity activity = cordova.getActivity();
     String urlRoute = "/pin/create/button/?";
     if (sourceUrl != null) {
@@ -63,16 +75,37 @@ public class PinterestPlugin extends CordovaPlugin {
       urlRoute += "description=" + Uri.encode(description);
     }
     try {
-      activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("pinterest://www.pinterest.com" + urlRoute)));
+      this.currentCallback = callback;
+      cordova.startActivityForResult(this, new Intent(Intent.ACTION_VIEW, Uri.parse("pinterest://www.pinterest.com" + urlRoute)), PINTEREST_RESULT);
     } catch (Exception e) {
       activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.pinterest.com" + urlRoute)));
+      callback.success();
     }
-    callback.success();
   }
 
   private void executeCheckAvailable(CallbackContext callback) {
     Log.v(TAG, "Checking pinterest availability");
     callback.error(AVAILABLE + " is not Supported on Android");
+  }
+
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
+    if (requestCode == PINTEREST_RESULT) {
+      switch (resultCode){
+        case Activity.RESULT_OK:
+          currentCallback.success();
+          break;
+        case Activity.RESULT_CANCELED:
+          //currentCallback.error(""); // empty string signals cancellation
+          // Pinterest always signals back canceled, even when it shares successfully
+          currentCallback.success();
+          break;
+        default:
+          currentCallback.error("Pinterest sharing error (code " + resultCode + ")");
+          break;
+      }
+    }
   }
 
 
