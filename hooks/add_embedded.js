@@ -87,9 +87,9 @@ module.exports = function(context) {
     function addRunScriptPhase(proj) {
       var options = {
         shellPath: '/bin/sh',
-        shellScript: 'bash "$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH/imglyKit.framework/strip-framework.sh"'
+        shellScript: 'bash "$BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH/AFNetworking.framework/strip-frameworks.sh"'
       };
-      var phase = proj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Strip imglyKit framework', proj.getFirstTarget().uuid, options);
+      var phase = proj.addBuildPhase([], 'PBXShellScriptBuildPhase', 'Strip frameworks', proj.getFirstTarget().uuid, options);
       console.log("Added build phase:");
       console.log(phase);
     }
