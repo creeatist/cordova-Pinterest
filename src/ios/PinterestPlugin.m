@@ -34,7 +34,7 @@
     NSURL *imageURL = [NSURL URLWithString:[command.arguments objectAtIndex:1]];
 	NSString* description =[NSString stringWithString:[command.arguments objectAtIndex:2]];
 
-    [PDKPin pinWithImageURL:imageURL link:sourceURL suggestedBoardName:"" note:description fromViewController:[self viewController] withSuccess:^{
+    [PDKPin pinWithImageURL:imageURL link:sourceURL suggestedBoardName:@"" note:description fromViewController:[self viewController] withSuccess:^{
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
     } andFailure:^(NSError *error) {
